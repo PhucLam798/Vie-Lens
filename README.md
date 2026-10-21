@@ -84,7 +84,3 @@ Exact arguments, run order, and which output feeds each table or figure are in `
 ## Citation
 
 Coming soon.
-
-## License
-
-TBD
