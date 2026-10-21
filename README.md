@@ -79,7 +79,6 @@ Exact arguments, run order, and which output feeds each table or figure are in `
 ## Related resources
 
 - Dataset: [tarudesu/viLens-concepts](https://huggingface.co/datasets/tarudesu/viLens-concepts)
-- Dataset construction: [tarudesu/viLens-concepts-preparation](https://github.com/tarudesu/viLens-concepts-preparation)
 
 ## Citation
 
