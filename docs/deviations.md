@@ -1,0 +1,67 @@
+# Decisions and registered-procedure deviations
+
+This log records the OPS entries and analysis decisions that resolve or amend registered procedures. Timing is taken from the decision text and run history. “Can change a reported number” refers to the affected output, including a gate or validity result.
+
+| ID | Date | One-line factual summary | Affected step(s) | Registered text changed or specified (path:line) | Recorded relative to affected result | Can change a reported number? |
+|---|---|---|---|---|---|---|
+| OPS-1 | 2026-09-29 | Job token is sourced from the repository key file. | Jobs | AGENTS.md:136–140 | Before affected jobs | No; setup only |
+| OPS-2 | 2026-09-29 | The shared venv and pinned requirements define job dependencies. | All jobs | AGENTS.md:93–111 | Before affected jobs | No; setup only |
+| OPS-3 | 2026-09-29 | The pytest gate covers code and configuration commits. | Tests/commits | AGENTS.md:349–366 | Before affected commits | No; process only |
+| OPS-4 | 2026-09-29 | Pytest was added to the shared environment without changing installed versions. | Tests | AGENTS.md:95–110 | Before affected tests | No; process only |
+| OPS-5 | 2026-09-29 | Tokenizer and config audits are allowed while the study-set decision is open. | X0 | AGENTS.md:176–180; 265–274 | Before affected audits | No; no model forward pass |
+| OPS-6 | 2026-09-29 | Snapshot completeness is established from resolved weight-file headers. | E1/model loading | AGENTS.md:170–180 | Before affected model loads | No; validation only |
+| OPS-7 | 2026-09-29 | E1 gates the model-dtype lens path and reports the fp32 path. | E1 | docs/experiments.md:517–536; AGENTS.md:301–310 | After tiny-model check; before E1 primary | Yes; validity gate |
+| OPS-8 | 2026-09-30 | v1.4 is governed from this repository and its frozen tag. | X1 and analyses | docs/experiments.md:257–260; docs/prereg/PREREG.md:249–278 | Before study-model results | No; specification location |
+| OPS-9 | 2026-09-30 | E1 residual validity follows model-order additions; A10 VI matching uses the registered orthographic key. | E1, E8 A10 | docs/experiments.md:517–536, 574–584; AGENTS.md:301–310 | After E1 trial; before primary results | Yes; validity and competence outcomes |
+| OPS-10 | 2026-09-30 | The frozen preparation functions are used through the approved FLORES rebuild route. | X0/P-D | AGENTS.md:184–194; docs/experiments.md:487–506 | Before direction capture | No; source route only |
+| OPS-11 | 2026-09-30 | Provenance is captured once and resume matching uses the code-tree hash. | All result units | AGENTS.md:313–320; 160–162 | After E1 outputs; before rerun | No; resume identity only |
+| OPS-12 | 2026-09-30 | P-D records the registered matched and FLORES activations and batching. | P-D/E5/E7/E8 | docs/experiments.md:564–573; AGENTS.md:301–310 | Before P-D capture | Yes; captured activation values |
+| OPS-13 | 2026-10-01 | P-L item coverage, readouts, units, and trial are fixed. | P-L/E2–E5/E7 | docs/experiments.md:537–563; AGENTS.md:275–279 | Before P-L primary capture | Yes; item/readout scope |
+| OPS-14 | 2026-10-02 | E2–E5 layers, item sets, quantities, gates, decisions, and bootstrap are specified. | E2–E5/Checkpoint H | docs/analysis_spec.md:17–156; docs/prereg/PREREG.md:443–505 | After non-test A6 gate; before test-result review | Yes; analysis quantities and outcomes |
+| OPS-15 | 2026-10-05 | The shared model cache location changed; pinned revisions stayed fixed. | Model loading | AGENTS.md:60–85; 170–180 | After earlier P-D/P-L capture; before subsequent jobs | No; path only |
+| OPS-16 | 2026-10-10 | Token matching and analysis hot paths were corrected with no formula or draw changes. | E2–E5 | docs/analysis_spec.md:137–156; AGENTS.md:28, 351–366 | After failed runs; before primary analysis | No; equivalence reported zero difference |
+| OPS-17 | 2026-10-11 | E2's exact check uses the prompt-only reference and reports cross-forward differences. | E2 | docs/experiments.md:537–563 | After failed trial; before primary output | Yes; validity gate |
+| OPS-18 | 2026-10-11 | E2 Gate A uses the stated absolute and relative tolerances; Gate B is descriptive. | E2 | docs/experiments.md:537–563 | After failed trial; before primary output | Yes; validity result |
+| OPS-19 | 2026-10-11 | E2 Gate A adds a trial discrimination control and the revised absolute tolerance. | E2 | docs/experiments.md:537–563 | After failed trial; before primary output | Yes; validity result |
+| OPS-20 | 2026-10-11 | E2 resolves cloze units through the P-L unit plan. | E2 | docs/experiments.md:537–563; AGENTS.md:160–162 | After partial E2 rows; before cloze rerun | No; lookup fix |
+| OPS-21 | 2026-10-12 | The frozen-analysis guard accepts the frozen commit as an ancestor and caps threads. | E2–E5 jobs | AGENTS.md:332–333 | After job stopped before reading data; before analysis | No; execution guard only |
+| OPS-22 | 2026-10-12 | Analysis inputs resolve through P-L's unit plan and are checked before computation. | E2–E5 | docs/analysis_spec.md:17–32, 97–135 | After input-lookup failure; before statistic | No; lookup/preflight fix |
+| OPS-23 | 2026-10-12 | The existing landmark helper is imported for C1. | C1 | docs/analysis_spec.md:153–156 | After core/competence output; before C1 output | No; import fix |
+| OPS-24 | 2026-10-12 | The Checkpoint H collector uses filtered rise rows and the current gate schema. | Checkpoint H | docs/analysis_spec.md:153–156 | After C1 output; before Checkpoint H output | No; stage fix |
+| OPS-25 | 2026-10-13 | Figure generation is separated from the Checkpoint H tables. | Figures | docs/experiments.md:639–652 | After tables; before figure output | No; figure stage only |
+| OPS-26 | 2026-10-13 | Checkpoint H verdicts and abstract version were recorded before E6–E8. | Checkpoint H/E6–E8 | docs/analysis_spec.md:153–156; AGENTS.md:274 | After Checkpoint H results; before E6–E8 analyses | No; verdict recording, not computation |
+| OPS-27 | 2026-10-13 | E8 steering vectors, settings, outcomes, bootstrap, and trial gates are specified. | E8 | docs/experiments.md:574–584; docs/prereg/v1.4_amendment.md:95–102 | After Checkpoint H; before E8 run | Yes; steering and outcome values |
+| OPS-28 | 2026-10-13 | E6 items, model, contrasts, inference, and sensitivities are specified. | E6 | docs/experiments.md:585–594; docs/prereg/PREREG.md:343–356 | After E8 checkpoint; before E6 results | Yes; E6 quantities |
+| OPS-29 | 2026-10-14 | E6 fit validity, optimizer fallback, and valid-draw handling are specified. | E6 | docs/prereg/PREREG.md:93–115; docs/experiments.md:585–594 | After synthetic timing; before E6 outcomes | Yes; fit selection/validity |
+| OPS-30 | 2026-10-14 | E6 synthetic recovery checks are required before the primary fit. | E6 | docs/experiments.md:585–594 | After synthetic job 3302; before E6 outcomes | Yes; run eligibility |
+| OPS-31 | 2026-10-14 | The E6 optimizer selection uses the valid fit with the highest recorded REML likelihood. | E6 | docs/prereg/PREREG.md:93–115 | After synthetic recovery; before primary E6 output | Yes; fitted estimates may differ |
+| OPS-32 | 2026-10-14 | E6 provenance includes nested analysis entrypoints and all unit types. | E6 | AGENTS.md:313–320; 332–333 | After failed job with no statistic; before primary rerun | No; provenance fix |
+| OPS-33 | 2026-10-14 | E6 retains complete-case concepts with the formats in which they have rows. | E6 | docs/prereg/PREREG.md:93–103; docs/experiments.md:585–594 | After D-zh output; before mixed-model outcome | Yes; row grid and estimates |
+| OPS-34 | 2026-10-16 | E6 closeout checks estimability and moment-start likelihoods after the primary run. | E6 closeout | docs/prereg/PREREG.md:93–115 | After E6 primary results | No; confirmation/reporting checks |
+| OPS-35 | 2026-10-16 | E6 closeout uses memory-bounded rank and fit calculations. | E6 closeout | AGENTS.md:28, 86 | After OOM before closeout checks | No; engineering fix |
+| OPS-36 | 2026-10-16 | Qwen moment fits are reviewed against the primary interval under the stated rule. | E6 closeout | docs/prereg/PREREG.md:93–115 | After closeout diagnostics; before moment-fit estimates | Yes; conditional fit result |
+| OPS-37 | 2026-10-16 | E7 attribution bands, projections, heads, bootstrap, and checks are specified. | E7 | docs/experiments.md:595–601; AGENTS.md:301–310 | Before E7 statistics | Yes; E7 quantities and gates |
+| OPS-38 | 2026-10-16 | E7 10(b) uses the model-order identity and adds a directions-split smoke check. | E7/P-A | AGENTS.md:301–310; docs/experiments.md:595–601 | Before P-A capture and E7 statistic | Yes; validity result |
+| OPS-39 | 2026-10-16 | E7 replay uses P-L batches and adds an exact residual replay check. | E7/P-A | docs/experiments.md:537–563, 595–601 | After directions-only diagnostic; before test capture | Yes; activations and 10(c′) gate |
+| OPS-40 | 2026-10-17 | R1 captures and reports the registered few-shot sets as descriptive robustness. | R1 | docs/experiments.md:602–617; docs/prereg/PREREG.md:421–430 | Before R1 capture/statistic | Yes; R1 quantities |
+| OPS-41 | 2026-10-17 | R2 compares FLORES-fit directions with matched-fit directions descriptively. | R2 | docs/experiments.md:607; docs/prereg/PREREG.md:422 | Before R2 statistic | Yes; R2 quantities |
+| OPS-42 | 2026-10-17 | R1 retains greedy generation for descriptive A10 per set. | R1 | docs/experiments.md:602–617; docs/prereg/v1.4_amendment.md:120–130 | Before R1 capture | Yes; adds A10 output |
+| OPS-43 | 2026-10-18 | E7 rule-(ii) bands use eligible blocks; the original slope band is a sensitivity. | E7 | docs/experiments.md:595–601; docs/analysis_spec.md:42–45 | Before E7 statistic; after weight-free band preflight | Yes; E7 band estimates |
+| OPS-44 | 2026-10-19 | R4/R6/R7/R9/R11 E4 sensitivities are specified as descriptive. | R-battery | docs/experiments.md:602–617; docs/prereg/PREREG.md:424–430 | Before any sensitivity computation | Yes; added sensitivity outputs |
+| OPS-45 | 2026-10-19 | E9 specifies paired nodiac/diac capture and descriptive analysis. | E9 | docs/experiments.md:618–624; docs/prereg/v1.4_amendment.md:149–156 | Before E9 capture | Yes; added E9 outputs |
+| OPS-46 | 2026-10-19 | R10 reports along-path positions descriptively with a fixed per-position aggregation. | R10 | docs/prereg/v1.4_amendment.md:68–72; docs/experiments.md:615 | Before R10 computation | Yes; adds R10 estimates |
+| OPS-47 | 2026-10-20 | R5 tuned lens skipped by human decision because training inputs, procedure and profile were unspecified and remaining time is assigned to figures and writing. | R5 | docs/experiments.md:610; docs/prereg/PREREG.md:425; D8, docs/decisions.md | before any R5 computation (none exists) | no |
+| D1 | 2026-09-29 | Matched-distractor contrasts replace the earlier per-language z specification. | E3–E5 | docs/prereg/v1.4_amendment.md:31–49 | Before study-model results | Yes; score/rise values |
+| D2 | 2026-09-29 | Landmark thresholds are anchored to the Vietnamese final-layer readout. | E3–E5 | docs/prereg/v1.4_amendment.md:50–55 | Before study-model results | Yes; landmark values |
+| D3 | 2026-09-29 | The no-leading-space Chinese target is primary. | E2–E5 | docs/prereg/v1.4_amendment.md:56–62 | Before study-model results | Yes; target scores |
+| D4 | 2026-09-29 | H1/H2 primary outcomes use the cognate-free item subset. | E3–E5 | docs/prereg/v1.4_amendment.md:74–81 | Before study-model results | Yes; item scope |
+| D5 | 2026-09-29 | The registered English frequency field is the primary E6 covariate. | E6 | docs/prereg/v1.4_amendment.md:103–108 | Before study-model results | Yes; model estimates |
+| D6 | 2026-09-29 | The E8 intervention, settings, outcomes, and sampling are specified. | E8 | docs/prereg/v1.4_amendment.md:95–102 | Before E8 results | Yes; steering outcomes |
+| D7 | 2026-09-29 | The compute platform is the lab server with Slurm. | All jobs | docs/experiments.md:439–460; AGENTS.md:115–160 | Before affected jobs | No; platform only |
+| D8 | 2026-09-29 | R5 is assigned to a tuned Llama lens with a balanced training set. | R5 | docs/experiments.md:610; docs/prereg/PREREG.md:425 | Before R5 computation; training details deferred | Yes; if run |
+| D9 | 2026-09-29 | The two registered Holm families are fixed. | E4/E6 | docs/prereg/v1.4_amendment.md:131–145 | Before study-model results | Yes; adjusted p-values |
+| D10 | 2026-09-29 | Same-size base checkpoints are the primary study models. | All study-model analyses | docs/experiments.md:396–422; AGENTS.md:176–180 | Before primary model runs | Yes; model outputs |
+| D11 | 2026-09-29 | MixedLM in the registered statsmodels version is the §7.1 implementation. | E6 | docs/prereg/PREREG.md:93–103 | Before E6 results | Yes; model estimates |
+| D12 | 2026-09-29 | The stated directions-prompt overlap handling is fixed and reported. | P-D/E5/E7 | docs/experiments.md:191–206; AGENTS.md:265–274 | Before post-tag P-D capture | Yes; fit/gate inputs |
+| OPS-48 | 2026-10-20 | Final release v1.0 staged from pinned public inputs; restricted inputs omitted. | Dataset release | docs/decisions.md:282 | After all results; release only | No |
+| OPS-49 | 2026-10-21 | HF dataset replaced as a single-commit v1.0 release; code revision repointed to the new head. | Dataset release/config | docs/decisions.md; configs/experiments.yaml | After all results; release only | No |

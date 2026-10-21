@@ -1,0 +1,12 @@
+data/external/
+results/
+logs/
+keys/
+codex_logs/
+__pycache__/
+*.pyc
+.pytest_cache/
+.cache/
+local.env
+AGENTS.md
+update_progress.md

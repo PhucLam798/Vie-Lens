@@ -1,0 +1,2 @@
+{"concept_id": "000000000001", "format": "repetition", "lang": "vi", "prompt": "Read:", "split": "fit", "target": " cà phê"}
+{"concept_id": "000000000002", "format": "translation", "lang": "en", "prompt": "Read:", "split": "validate", "target": " coffee"}

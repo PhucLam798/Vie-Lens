@@ -1,0 +1,17 @@
+{
+  "bootstrap": {
+    "key": "bootstrap|<analysis>|<model>",
+    "resamples": 1000
+  },
+  "rng_scheme": "numpy.random.default_rng([seed, zlib.crc32(key.encode('utf-8'))])",
+  "seed": 20260925,
+  "steer_random_direction": {
+    "key": "steer_random|<family>|<layer>"
+  },
+  "stream_keys": [
+    "distractor|<family>|<lang>|<variant>|<concept_id>",
+    "e0_distractor|<family>|<lang>|<variant>|<concept_id>",
+    "e8|<family>|<stratum>",
+    "e0_sample"
+  ]
+}

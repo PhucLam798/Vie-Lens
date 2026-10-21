@@ -1,0 +1,120 @@
+artifact_path,produced_by,entrypoint,code_commit,input_units,governing_decisions,verify_command
+reports/E0_throughput.csv,1484,,2047e1e724258ac57edff497c8b061eadfe84f65;e4ef9469c3cc4d9fc4178d0417e9d7d2ad8fc6ac,,,
+reports/E1_competence.csv,1523,,6da843a05866076a244b218bfbdb2f6e4a919bc1,,,
+reports/E1_precision.csv,1523,,6da843a05866076a244b218bfbdb2f6e4a919bc1,,,
+reports/E2-E5_a10.csv,,,,,,
+reports/E2-E5_c1.csv,,,,,,
+reports/E2-E5_e2.csv,2728,,3fe7d7efa669ee5e3031a2a8d1d42a37506bd77b,,,
+reports/E2-E5_e2_units.csv,,,,,,
+reports/E2-E5_e5.csv,,,,,,
+reports/E2-E5_holm.csv,,,,,,
+reports/E2-E5_la_curves.csv,,,,,,
+reports/E2-E5_landmarks.csv,,,,,,
+reports/E2-E5_rules.csv,3026,,609f46b38dac3f07220227be28b50c5bfb58b4e0,,,
+reports/E2-E5_undefined_layers.csv,,,,,,
+reports/E5_gate.csv,,,,,,
+reports/E6_balance.csv,,,,,,
+reports/E6_closeout.csv,3891,,4740c31a8a0da5d09adf26b4e372524c9c3f0336,,,
+reports/E6_dzh.csv,3527,,75e1ee9cd23b126059ac30a68b76b3cb7711f5ae,,,
+reports/E6_holm.csv,3527,,75e1ee9cd23b126059ac30a68b76b3cb7711f5ae,,,
+reports/E6_matched.csv,3527,,75e1ee9cd23b126059ac30a68b76b3cb7711f5ae,,,
+reports/E6_matched_pairs.csv,,,,,,
+reports/E6_model_terms.csv,3527,,75e1ee9cd23b126059ac30a68b76b3cb7711f5ae,,,
+reports/E6_moment_refit.csv,3905,,1769989e8f29a6637bf12067b34f9412932c08a3,,,
+reports/E6_sensitivity.csv,3527,,75e1ee9cd23b126059ac30a68b76b3cb7711f5ae,,,
+reports/E7_band.csv,4473,job_analyze_e7.py,39e2f749517f25f06fa1343c98968e8b0e890d97,,,
+reports/E7_heads.csv,4621,job_analyze_e7.py,4f5065cf0edbd9c3e64dd77d1b1d845a5fc76380,,,
+reports/E7_heads_all.csv,4621,job_analyze_e7.py,4f5065cf0edbd9c3e64dd77d1b1d845a5fc76380,,,
+reports/E7_layers.csv,4473,job_analyze_e7.py,39e2f749517f25f06fa1343c98968e8b0e890d97,,,
+reports/E8_delta.csv,3183,,566653a83674711cd7002cf00f953b6ac1eb5f67,results/ps/family=gemma__format=repetition__vectors.npy;results/ps/family=gemma__format=translation__vectors.npy;results/ps/family=llama__format=repetition__vectors.npy;results/ps/family=llama__format=translation__vectors.npy;results/ps/family=qwen__format=repetition__vectors.npy;results/ps/family=qwen__format=translation__vectors.npy,,
+reports/E8_rates.csv,3183,,566653a83674711cd7002cf00f953b6ac1eb5f67,results/ps/family=gemma__format=repetition__vectors.npy;results/ps/family=gemma__format=translation__vectors.npy;results/ps/family=llama__format=repetition__vectors.npy;results/ps/family=llama__format=translation__vectors.npy;results/ps/family=qwen__format=repetition__vectors.npy;results/ps/family=qwen__format=translation__vectors.npy,,
+reports/E9.csv,4682,,,,,
+reports/R10.csv,4683,,,,,
+reports/R1_metrics.csv,4391,,,,,
+reports/R1_set_outcomes.csv,4391,,,,,
+reports/R2_alignment.csv,4301,,,,,
+reports/R2_classification.csv,4301,,,,,
+reports/R2_directions.csv,4301,,,,,
+reports/R_battery_e4.csv,4629,,,,,
+reports/X0b_checks.csv,,,,,,
+reports/X0c_a_checks.csv,,,,,,
+reports/X0c_a_cognates.csv,,,,,,
+reports/X0c_a_m1_first_token.csv,,,,,,
+reports/X0c_a_prompt_duplicates.csv,,,,,,
+reports/X0c_a_target_tokenization.csv,,,,,,
+reports/X0c_a_tokenizers.csv,,,,,,
+reports/X0d_distractor_quality.csv,,,,,,
+reports/audit/claims_check.csv,,,,,,
+reports/audit/job_ledger.csv,,,,,,
+reports/audit/results_inventory.csv,,,,,,
+reports/audit/results_master.csv,,,,,,
+reports/checkpoint_h_argmax_layers.csv,,,,,,
+reports/checkpoint_h_la_sensitivity.csv,,,,,,
+reports/checkpoint_h_rules.csv,3026,,609f46b38dac3f07220227be28b50c5bfb58b4e0,,,
+reports/checkpoint_h_verdicts.csv,3026,,609f46b38dac3f07220227be28b50c5bfb58b4e0,,,
+reports/figures/data/fig02_m1_m2.csv,,,,reports/E2-E5_e2.csv;reports/E2-E5_c1.csv,,bash logs/t29/python.sh scripts/figures.py --verify
+reports/figures/data/fig03_rise_landmarks.csv,,,,reports/E2-E5_la_curves.csv;reports/E2-E5_landmarks.csv,,bash logs/t29/python.sh scripts/figures.py --verify
+reports/figures/data/fig04_la_gate.csv,,,,reports/E2-E5_la_curves.csv;reports/E5_gate.csv,,bash logs/t29/python.sh scripts/figures.py --verify
+reports/figures/data/fig05_e6_forest.csv,,,,reports/E6_dzh.csv;reports/E6_model_terms.csv;reports/E6_sensitivity.csv,,bash logs/t29/python.sh scripts/figures.py --verify
+reports/figures/data/fig06_e8_rates.csv,,,,reports/E8_rates.csv;reports/E8_delta.csv;reports/E2-E5_landmarks.csv,OPS-27,bash logs/t29/python.sh scripts/figures.py --verify
+reports/figures/data/fig07_e7_projection.csv,,,,reports/E7_band.csv;reports/E7_layers.csv,OPS-37,bash logs/t29/python.sh scripts/figures.py --verify
+reports/figures/data/supp01_r1_forest.csv,,,,reports/R1_metrics.csv,,bash logs/t29/python.sh scripts/figures.py --verify
+reports/figures/data/supp02_r2_validation.csv,,,,reports/R2_classification.csv;reports/R2_alignment.csv;reports/R2_directions.csv,,bash logs/t29/python.sh scripts/figures.py --verify
+reports/figures/data/supp03_e9_paired.csv,,,,reports/E9.csv,,bash logs/t29/python.sh scripts/figures.py --verify
+reports/figures/data/supp04_e7_heads.csv,,,,reports/E7_heads_all.csv;reports/E7_heads.csv,,bash logs/t29/python.sh scripts/figures.py --verify
+reports/figures/data/supp05_r10_positions.csv,,,,reports/R10.csv,,bash logs/t29/python.sh scripts/figures.py --verify
+reports/figures/data/supp06_r_battery_outcomes.csv,,,,reports/R_battery_e4.csv,,bash logs/t29/python.sh scripts/figures.py --verify
+reports/figures/data/supp07_c1_full.csv,,,,reports/E2-E5_c1.csv,,bash logs/t29/python.sh scripts/figures.py --verify
+reports/figures/fig02_m1_m2.pdf,,,,reports/E2-E5_e2.csv;reports/E2-E5_c1.csv,,bash logs/t29/python.sh scripts/figures.py --verify
+reports/figures/fig02_m1_m2.png,,,,reports/E2-E5_e2.csv;reports/E2-E5_c1.csv,,bash logs/t29/python.sh scripts/figures.py --verify
+reports/figures/fig03_rise_landmarks.pdf,,,,reports/E2-E5_la_curves.csv;reports/E2-E5_landmarks.csv,,bash logs/t29/python.sh scripts/figures.py --verify
+reports/figures/fig03_rise_landmarks.png,,,,reports/E2-E5_la_curves.csv;reports/E2-E5_landmarks.csv,,bash logs/t29/python.sh scripts/figures.py --verify
+reports/figures/fig04_la_gate.pdf,,,,reports/E2-E5_la_curves.csv;reports/E5_gate.csv,,bash logs/t29/python.sh scripts/figures.py --verify
+reports/figures/fig04_la_gate.png,,,,reports/E2-E5_la_curves.csv;reports/E5_gate.csv,,bash logs/t29/python.sh scripts/figures.py --verify
+reports/figures/fig05_e6_forest.pdf,,,,reports/E6_dzh.csv;reports/E6_model_terms.csv;reports/E6_sensitivity.csv,,bash logs/t29/python.sh scripts/figures.py --verify
+reports/figures/fig05_e6_forest.png,,,,reports/E6_dzh.csv;reports/E6_model_terms.csv;reports/E6_sensitivity.csv,,bash logs/t29/python.sh scripts/figures.py --verify
+reports/figures/fig06_e8_rates.pdf,,,,reports/E8_rates.csv;reports/E8_delta.csv;reports/E2-E5_landmarks.csv,OPS-27,bash logs/t29/python.sh scripts/figures.py --verify
+reports/figures/fig06_e8_rates.png,,,,reports/E8_rates.csv;reports/E8_delta.csv;reports/E2-E5_landmarks.csv,OPS-27,bash logs/t29/python.sh scripts/figures.py --verify
+reports/figures/fig07_e7_projection.pdf,,,,reports/E7_band.csv;reports/E7_layers.csv,OPS-37,bash logs/t29/python.sh scripts/figures.py --verify
+reports/figures/fig07_e7_projection.png,,,,reports/E7_band.csv;reports/E7_layers.csv,OPS-37,bash logs/t29/python.sh scripts/figures.py --verify
+reports/figures/supp01_r1_forest.pdf,,,,reports/R1_metrics.csv,,bash logs/t29/python.sh scripts/figures.py --verify
+reports/figures/supp01_r1_forest.png,,,,reports/R1_metrics.csv,,bash logs/t29/python.sh scripts/figures.py --verify
+reports/figures/supp02_r2_validation.pdf,,,,reports/R2_classification.csv;reports/R2_alignment.csv;reports/R2_directions.csv,,bash logs/t29/python.sh scripts/figures.py --verify
+reports/figures/supp02_r2_validation.png,,,,reports/R2_classification.csv;reports/R2_alignment.csv;reports/R2_directions.csv,,bash logs/t29/python.sh scripts/figures.py --verify
+reports/figures/supp03_e9_paired.pdf,,,,reports/E9.csv,,bash logs/t29/python.sh scripts/figures.py --verify
+reports/figures/supp03_e9_paired.png,,,,reports/E9.csv,,bash logs/t29/python.sh scripts/figures.py --verify
+reports/figures/supp04_e7_heads.pdf,,,,reports/E7_heads_all.csv;reports/E7_heads.csv,,bash logs/t29/python.sh scripts/figures.py --verify
+reports/figures/supp04_e7_heads.png,,,,reports/E7_heads_all.csv;reports/E7_heads.csv,,bash logs/t29/python.sh scripts/figures.py --verify
+reports/figures/supp05_r10_positions.pdf,,,,reports/R10.csv,,bash logs/t29/python.sh scripts/figures.py --verify
+reports/figures/supp05_r10_positions.png,,,,reports/R10.csv,,bash logs/t29/python.sh scripts/figures.py --verify
+reports/figures/supp06_r_battery_outcomes.pdf,,,,reports/R_battery_e4.csv,,bash logs/t29/python.sh scripts/figures.py --verify
+reports/figures/supp06_r_battery_outcomes.png,,,,reports/R_battery_e4.csv,,bash logs/t29/python.sh scripts/figures.py --verify
+reports/figures/supp07_c1_full.pdf,,,,reports/E2-E5_c1.csv,,bash logs/t29/python.sh scripts/figures.py --verify
+reports/figures/supp07_c1_full.png,,,,reports/E2-E5_c1.csv,,bash logs/t29/python.sh scripts/figures.py --verify
+reports/reproduce_map.csv,,,,,,
+reports/tables/T1.md,,,,reports/E2-E5_e5.csv;reports/E2-E5_rules.csv;reports/checkpoint_h_verdicts.csv,,bash logs/t29/python.sh scripts/tables.py --verify
+reports/tables/T1.tex,,,,reports/E2-E5_e5.csv;reports/E2-E5_rules.csv;reports/checkpoint_h_verdicts.csv,,bash logs/t29/python.sh scripts/tables.py --verify
+reports/tables/T2.md,,,,reports/E2-E5_landmarks.csv,,bash logs/t29/python.sh scripts/tables.py --verify
+reports/tables/T2.tex,,,,reports/E2-E5_landmarks.csv,,bash logs/t29/python.sh scripts/tables.py --verify
+reports/tables/T3.md,,,,reports/E8_delta.csv;reports/E8_rates.csv,,bash logs/t29/python.sh scripts/tables.py --verify
+reports/tables/T3.tex,,,,reports/E8_delta.csv;reports/E8_rates.csv,,bash logs/t29/python.sh scripts/tables.py --verify
+reports/tables/T4.md,,,,reports/E6_dzh.csv;reports/E6_holm.csv;reports/E6_matched.csv;reports/E6_model_terms.csv,,bash logs/t29/python.sh scripts/tables.py --verify
+reports/tables/T4.tex,,,,reports/E6_dzh.csv;reports/E6_holm.csv;reports/E6_matched.csv;reports/E6_model_terms.csv,,bash logs/t29/python.sh scripts/tables.py --verify
+reports/tables/T5.md,,,,reports/E7_band.csv,,bash logs/t29/python.sh scripts/tables.py --verify
+reports/tables/T5.tex,,,,reports/E7_band.csv,,bash logs/t29/python.sh scripts/tables.py --verify
+reports/tables/T6.md,,,,reports/R1_set_outcomes.csv;reports/R_battery_e4.csv,,bash logs/t29/python.sh scripts/tables.py --verify
+reports/tables/T6.tex,,,,reports/R1_set_outcomes.csv;reports/R_battery_e4.csv,,bash logs/t29/python.sh scripts/tables.py --verify
+reports/tables/T7.md,,,,reports/E9.csv,,bash logs/t29/python.sh scripts/tables.py --verify
+reports/tables/T7.tex,,,,reports/E9.csv,,bash logs/t29/python.sh scripts/tables.py --verify
+reports/tables/TA.md,,,,reports/tables/tableA_tokenization.csv,,bash logs/t29/python.sh scripts/tables.py --verify
+reports/tables/TA.tex,,,,reports/tables/tableA_tokenization.csv,,bash logs/t29/python.sh scripts/tables.py --verify
+reports/tables/data/T1.csv,,,,reports/E2-E5_e5.csv;reports/E2-E5_rules.csv;reports/checkpoint_h_verdicts.csv,,bash logs/t29/python.sh scripts/tables.py --verify
+reports/tables/data/T2.csv,,,,reports/E2-E5_landmarks.csv,,bash logs/t29/python.sh scripts/tables.py --verify
+reports/tables/data/T3.csv,,,,reports/E8_delta.csv;reports/E8_rates.csv,,bash logs/t29/python.sh scripts/tables.py --verify
+reports/tables/data/T4.csv,,,,reports/E6_dzh.csv;reports/E6_holm.csv;reports/E6_matched.csv;reports/E6_model_terms.csv,,bash logs/t29/python.sh scripts/tables.py --verify
+reports/tables/data/T5.csv,,,,reports/E7_band.csv,,bash logs/t29/python.sh scripts/tables.py --verify
+reports/tables/data/T6.csv,,,,reports/R1_set_outcomes.csv;reports/R_battery_e4.csv,,bash logs/t29/python.sh scripts/tables.py --verify
+reports/tables/data/T7.csv,,,,reports/E9.csv,,bash logs/t29/python.sh scripts/tables.py --verify
+reports/tables/data/TA.csv,,,,reports/tables/tableA_tokenization.csv,,bash logs/t29/python.sh scripts/tables.py --verify
+reports/tables/tableA_tokenization.csv,,,,,,
+reports/tables/tableA_tokenization.md,,,,,,

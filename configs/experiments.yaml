@@ -1,0 +1,460 @@
+# Vie-Lens experiment configuration: single source of truth (AGENTS.md rule 39).
+# Keys marked HUMAN-ONLY are never edited by an agent.
+seed: 20260925
+
+paths:
+  repo_root: /datastore/luannt/Vie-Lens
+  manifest: data/MANIFEST.sha256
+  concepts_jsonl: data/external/viLens-concepts/concepts.jsonl
+  concepts_tsv: data/external/viLens-concepts-preparation/data/concepts.tsv
+  prompts_dir: data/external/viLens-concepts/prompts
+  prep_repo: data/external/viLens-concepts-preparation
+  derived: derived
+  results: results
+  reports: reports
+  logs: logs
+  model_cache: /datastore/shared/models   # read-only shared HF cache (AGENTS.md rule 20)
+
+data:
+  hf_repo: tarudesu/viLens-concepts
+  hf_revision: a8d9ca1a75cd9944da6a3364a679094913859210   # dataset v1.0
+  prep_repo: tarudesu/viLens-concepts-preparation
+  prep_tag: data-v1.3.1
+  prep_commit: 873def8829f4024b72c0993356447d3cca31b549
+  primary_prompt_files:             # few-shot set 1 is primary (plan §2.1)
+    repetition_diac: repetition_diac_set1
+    translation_diac: translation_diac_set1
+    repetition_nodiac: repetition_nodiac_set1
+    translation_nodiac: translation_nodiac_set1
+    cloze_diac: cloze_diac_set1
+    cloze_nodiac: cloze_nodiac_set1
+  pretag_excluded_directions:        # D12: byte-identical to translation_diac_set1 test prompts; no model sees them before prereg-v1.4
+    - {concept_id: "9b523e0c2ba7", format: translation, lang: vi}
+    - {concept_id: "c8cac6e6221a", format: translation, lang: vi}
+    - {concept_id: "70d57c0663fa", format: translation, lang: vi}
+    - {concept_id: "44b4b01dae07", format: translation, lang: vi}
+    - {concept_id: "5fec3d7df089", format: translation, lang: vi}
+
+prereg:                          # HUMAN-ONLY (AGENTS.md rule 29)
+  data_tag: data-v1.3.1
+  analysis_tag: prereg-v1.4
+  test_items_unlocked: true
+
+models:
+  study_set: base                # HUMAN-ONLY (D10): "registered" or "base"
+  registered:
+    gemma: {hf_id: google/gemma-3-4b-it, revision: 093f9f388b31de276ce2de164bdc2081324b9767}
+    qwen:  {hf_id: Qwen/Qwen3-4B, revision: 1cfa9a7208912126459214e8b04321603b3df60c}
+    llama: {hf_id: meta-llama/Llama-3.2-3B-Instruct, revision: 0cb88a4f764b7a12671c53f0838cd831a0843b95}
+  base:
+    gemma: {hf_id: google/gemma-3-4b-pt, revision: cc012e0a6d0787b4adcc0fa2c4da74402494554d}
+    qwen:  {hf_id: Qwen/Qwen3-4B-Base, revision: 906bfd4b4dc7f14ee4320094d8b41684abff8539}
+    llama: {hf_id: meta-llama/Llama-3.2-3B, revision: 13afe5124825b4f3751f836b40dafda64c1ed062}
+
+text:
+  surface_remove_chars: [" ", "-", "'"]
+  surface_vi_replace: {ph: f}
+  ntok_context_prefix: "x:"         # prep configs/data.yaml tokens.context_prefix (build rule of ntok_*)
+  cognate_max_distance: 0.45        # en–fr and en–id surface distance must be >= this (prep filter-4 threshold)
+  audit_chunk_size: 8192            # pairs per batch-encode call in CPU audits (no effect on results)
+
+manifests:
+  rng_scheme: "numpy.random.default_rng([seed, zlib.crc32(key.encode('utf-8'))])"   # one independent stream per key
+  distractor_combos:                # (target_lang, target_variant) for main-test distractors (D1, D3, A12)
+    - [vi, released]
+    - [en, released]
+    - [fr, released]
+    - [id, released]
+    - [zh, released]
+    - [zh, nospace]
+    - [vi, nodiac]
+  e0_combos:                        # E0 pilot on directions prompts; zh uses the primary no-space form (D3)
+    - [vi, released]
+    - [en, released]
+    - [fr, released]
+    - [id, released]
+    - [zh, nospace]
+  e0_sample_size: 50
+  e8_max_items: 300
+
+runtime:
+  provenance_compare:               # sidecar fields that must equal the current run for a unit to be skipped (rule 18)
+    - unit_key
+    - config_sha256
+    - manifest_sha256
+    - derived_sha256
+    - code_sha256
+    - code_tree_sha256
+    - model_id
+    - model_revision
+    - dtype
+    - batch_size
+    - torch_version
+    - transformers_version
+    - tokenizers_version
+  git_clean_paths: ["src", "configs", "derived"]   # plus every job_*.py at the repo root (rule 41)
+  parquet_compression: zstd
+
+e0:                                  # pipeline pilot on the directions split (plan §5 E0); results are discarded
+  main_family: llama                 # smallest study model (28 blocks); full pilot
+  smoke_families: [gemma, qwen]      # 10-concept smoke test each
+  smoke_concepts: 10                 # first ranks of derived/e0_pilot.jsonl
+  batch_size: 16                     # provisional, E0 only; recorded in every sidecar
+  sweep_batch_sizes: [8, 16, 32, 64] # throughput sweep; stop at the first OOM
+  gen_max_new_tokens: 8              # greedy; stop at "\n" or " -" (A7/A10)
+  top_k: 20                          # answer-position top-k per layer
+  rerun_tolerance: 1.0e-4            # rule 40
+  results_dir: results/e0
+  rerun_dir: results/e0_rerun
+
+e1:                                   # model-side audit gate on the directions split (plan §5 E1; OPS-7)
+  families: [llama, qwen, gemma]
+  lens_gate_max_abs_logprob: 1.0e-3   # model-dtype lens vs model logits at block N (gate)
+  lens_gate_top1_agreement: 1.0       # gate
+  residual_gate_max_rel_error: 1.0e-4 # gate
+  early_depth_max: 0.15               # ℓ_early = blocks with ℓ/N ≤ 0.15 (excludes ℓ = 0)
+  expected_early_blocks: {gemma: [1, 5], qwen: [1, 5], llama: [1, 4]}   # plan §2.3
+  precision_check_concepts: 50        # bf16 vs fp32 weights, E0 sample ranks 0..49, repetition, vi target
+  competence_formats: [repetition, translation]
+  competence_flag_min_translation_vi: 0.20   # below this → checkpoint discussion (flag, not failure)
+  results_dir: results/e1_r2  # OPS-11 rerun; results/e1 = job 1512 (superseded)
+
+flores:                                # FLORES+ rebuild for P-D (OPS-10; rule 23)
+  repo: openlanguagedata/flores_plus
+  revision: 5fec6c13f9e5a4db2f745d4ec0d7c9721ddc4f06
+  split: dev
+  languages: [vie_Latn, eng_Latn, cmn_Hans, fra_Latn, ind_Latn]
+  hub_cache: /datastore/luannt/.cache/huggingface/hub
+  datasets_cache: /datastore/luannt/.cache/huggingface/datasets
+  parquet_dir: data/external/flores_plus
+  prep_download_script: data/external/viLens-concepts-preparation/data/build/01_download.py
+  prep_directions_script: data/external/viLens-concepts-preparation/data/build/release_scripts/build_flores_directions.py
+  prep_sources: data/external/viLens-concepts-preparation/data/build/SOURCES.md
+  output: data/external/directions_flores.jsonl
+  expected_ids: 997
+  expected_validate_ids: 199
+  expected_records: 4985
+
+pd:                                     # P-D directions pass (plan §4.2; v1.4 A6; OPS-12)
+  families: [llama, qwen, gemma]
+  sources: [matched, flores]
+  matched_formats: [repetition, translation]
+  flores_pooling: [last, mean]          # mean excludes tokenizer-added special tokens and padding
+  expected_matched_records: 1320        # per family (132 concepts x 5 langs x 2 formats)
+  expected_flores_records: 4985         # per family (997 ids x 5 langs)
+  expected_flores_validate_ids: 199
+  results_dir: results/pd
+
+pl:                                     # P-L lens pass (plan §4.2; OPS-13)
+  families: [llama, qwen, gemma]
+  primary:
+    condition: diac
+    fewshot_set: 1
+    files: [repetition_diac_set1, translation_diac_set1, cloze_diac_set1]
+  r1:
+    condition: diac
+    fewshot_sets: [2, 3, 4, 5, 6]
+    files:
+      - repetition_diac_set2
+      - repetition_diac_set3
+      - repetition_diac_set4
+      - repetition_diac_set5
+      - repetition_diac_set6
+      - translation_diac_set2
+      - translation_diac_set3
+      - translation_diac_set4
+      - translation_diac_set5
+      - translation_diac_set6
+    item_set: cf729
+    correct_readouts: [[vi, released], [en, released], [zh, nospace], [fr, released], [id, released]]
+    translation_extra_readouts: []
+    path_langs: []
+    generation: true
+    expected: {repetition: 729, translation: 721, prompts_per_set: 1450, sequences_per_prompt: 10}
+    results_dir: results/pl_r1
+  e9:
+    condition: nodiac
+    fewshot_set: 1
+    files: [repetition_nodiac_set1, translation_nodiac_set1, cloze_nodiac_set1]
+    scope: noncollapsed_main
+    exclude_collapsed: true
+    correct_readouts: [[vi, nodiac], [en, released], [fr, released], [id, released], [zh, nospace]]
+    translation_extra_readouts: []
+    path_langs: []
+    generation: true
+    expected: {repetition: 1231, translation: 1221, cloze: 29, sequences: 24810, units_per_family: 11}
+    results_dir: results/pl_e9
+  correct_readouts: [[vi, released], [en, released], [fr, released], [id, released], [zh, nospace], [zh, released], [vi, nodiac]]
+  translation_extra_readouts: [[ru, released]]
+  path_langs: [[en, released], [zh, nospace], [fr, released], [id, released]]
+  top_k: 20
+  gen_max_new_tokens: 8
+  shard_prompts: 250
+  batch_size: {llama: 64, qwen: 64, gemma: 64}   # sequence batch size; batch-size sweep was flat (T11)
+  expected: {prompts: 3346, sequences: 46720, repetition: 22351, translation: 23844, cloze: 525}
+  results_dir: results/pl
+  trial:
+    results_dir: results/pl_trial2
+    rerun_dir: results/pl_trial2_rerun
+    rerun_tolerance: 1.0e-4
+
+e9_analysis:
+  report: reports/E9.md
+  csv: reports/E9.csv
+
+r10_analysis:
+  report: reports/R10.md
+  csv: reports/R10.csv
+
+analysis:                              # OPS-14 constants for frozen E2–E5 analysis
+  window: [0.25, 0.75]
+  item_sets: [cf729, main, m1_main, m1_all]
+  gate_min_correct: 124
+  l_concept_fractions: [0.05, 0.10, 0.20]
+  bootstrap_resamples: 1000
+  bootstrap_key_template: "bootstrap|{item_set}|{model}|{format}"
+  la_random_key_template: "la_random|{family}|{format}|{layer}"
+
+r_battery_e4:                         # OPS-44 descriptive E4 sensitivities
+  variants:
+    - {name: R4_raw_s, code: R4, scope: cf729, filter: none, score_source: raw}
+    - {name: R6_bt_pass_strict_v1, code: R6, scope: cf729, filter: bt_pass_strict_v1, score_source: delta}
+    - {name: R6_external_attested, code: R6, scope: cf729, filter: external_attested, score_source: delta}
+    - {name: R6_all_three_nllb, code: R6, scope: cf729, filter: all_three_nllb, score_source: delta}
+    - {name: R6_min_surface_dist_ge_060, code: R6, scope: cf729, filter: min_surface_dist_ge_060, score_source: delta}
+    - {name: R7_competent, code: R7, scope: cf729, filter: competent_vi, score_source: delta}
+    - {name: R9_main, code: R9, scope: main, filter: none, score_source: delta}
+    - {name: R11_excluded, code: R11, scope: cf729, filter: exclude_r11_ids, score_source: delta}
+  outputs: {report: reports/R_battery_e4.md, csv: reports/R_battery_e4.csv}
+
+steering:                              # E8 steering protocol (OPS-27)
+  k_grid: [0.5, 1.0, 2.0]
+  random_control_k: 1.0
+  layers: all
+  arms:
+    translation: [generation, delta]
+    repetition: [delta]
+  gen_max_new_tokens: 8
+  stop_strings: ["\n", " -"]
+  max_items: 300                         # must equal manifests.e8_max_items
+  batch_size: {gemma: 16, qwen: 16, llama: 16}
+  profile: normal
+  bootstrap_resamples: 1000
+  bootstrap_key_template: "bootstrap|e8|{family}|{format}"
+  random_key_template: "steer_random|{family}|{layer}"
+  results_dir: results/ps
+  trial_results_dir: results/ps_trial
+
+e6:                                     # E6 H3 exploratory analysis (OPS-28)
+  strata: [sino, nonsino]
+  window: [0.25, 0.75]
+  bootstrap_resamples: 1000
+  dzh_key_template: "bootstrap|h3|{model}|pooled"
+  model_key_template: "bootstrap|h3cc|{model}|pooled"
+  matched_key_template: "bootstrap|h3m|{model}|pooled"
+  match_stream: e6_match
+  complete_case_counts: {sino: 469, nonsino: 688}
+  caliper: 0.2
+  reference_levels: {language: en, stratum: nonsino}
+  spline_df: 5
+  workers: 8
+  bootstrap_chunk: 100
+  max_projected_hours: 48
+  fit_methods: [lbfgs, lbfgs_mom, lbfgs_cold, bfgs, powell]
+  boundary_rule: true
+  llf_tie_tol: 1.0e-6
+  maxiter: 500
+  min_valid_draws: 950
+  synthetic_validation_draws: 100
+  synthetic_min_valid: 99
+  synthetic_sd: {concept: 1.0, concept_language: 1.0, residual: 2.0}
+  recovery:
+    planted_coefficients:
+      language_en: 0.35
+      depth: 0.16
+      task_format_translation: 0.03
+      stratum_sino_language_zh: 0.5
+    concept_sd_ratio_bounds: [0.5, 1.5]
+    target_wald_se_multiple: 3.0
+    target_abs_bias_max: 0.1
+    refits: 20
+    min_valid_refits: 19
+  r11_concept_ids: [151a3fe224ea, 17781bd98b3c, 922cd1167021, c9584b841817, c505c130104c, f5411853b246]
+  sensitivity_variants: [zipf_vi, zipf_zh, native_strict, bt_pass_strict_v1, external_attested, all_three_nllb, min_surface_dist_ge_060, R11_excluded]
+  closeout_workers: 1
+  output_dir: results/analysis/primary/e6
+  closeout_dir: results/analysis/primary/e6/closeout
+  moment_refit_json: results/analysis/primary/e6/closeout/moment_refit.json
+  synthetic_dir: results/analysis/synthetic/e6
+  report: reports/E6.md
+  outputs:
+    dzh: reports/E6_dzh.csv
+    model_terms: reports/E6_model_terms.csv
+    holm: reports/E6_holm.csv
+    matched: reports/E6_matched.csv
+    sensitivity: reports/E6_sensitivity.csv
+    matched_pairs: reports/E6_matched_pairs.csv
+    balance: reports/E6_balance.csv
+    closeout: reports/E6_closeout.csv
+    moment_refit: reports/E6_moment_refit.csv
+
+e7:                                     # E7 component attribution (OPS-37)
+  formats: [repetition, translation]
+  languages: [vi, en, zh, fr, id]
+  primary_item_set: cf729
+  sensitivity_item_set: main
+  prompt_condition: diac
+  fewshot_set: 1
+  trial_items_per_cell: 32
+  unit_chunk_prompts: 32
+  batch_size: {gemma: 4, qwen: 4, llama: 4}
+  replay:
+    p_a: {source: pl, batch_size_config: pl.batch_size, divisor: 2}
+    smoke: {source: pd, batch_size_config: inference.batch_size, divisor: 1}
+  expected_prompt_counts:
+    main: {repetition: 1535, translation: 1524}
+    cf729: {repetition: 729, translation: 721}
+  primary_metric: s
+  vietnamese_target_language: vi
+  profile: normal
+  smoke_profile: small
+  bootstrap_resamples: 1000
+  bootstrap_key_template: "bootstrap|e7|{model}|{format}"
+  head_rank_n: 10
+  share_epsilon: 1.0e-8
+  check_head_median_relative: 1.0e-2
+  check_head_p99_relative: 5.0e-2
+  check_residual_median_relative: 1.0e-2
+  check_residual_p99_relative: 5.0e-2
+  check_residual_model_order_max: 1.0e-4
+  check_residual_replay_max_relative: 1.0e-6
+  check_pl_median_relative: 1.0e-2
+  check_direction_relative: 1.0e-5
+  max_pd_e7_overlap: 0
+  p_l_results_dir: results/pl
+  p_d_results_dir: results/pd
+  e8_results_dir: results/ps
+  analysis_results_dir: results/analysis/primary
+  results_dir: results/pa
+  trial_results_dir: results/pa_trial
+  smoke_results_dir: results/pa_smoke
+  report: reports/E7.md
+  outputs:
+    layers: reports/E7_layers.csv
+    band: reports/E7_band.csv
+    heads: reports/E7_heads.csv
+    heads_all: reports/E7_heads_all.csv
+
+inference:
+  weights_dtype: bfloat16
+  lens_dtype: float32               # analysis lens (rule 22); a model-dtype lens exists only for path-validity checks
+  attn_implementation: eager        # needed later for head-level attribution (E7); identical for all models
+  padding_side: right
+  lens_position_chunk: 256          # positions per fp32 vocab projection (memory only; no effect on values)
+  batch_size:
+    gemma: 64   # from E0 job 1484 sweep (peak 14.49 GB)
+    qwen: 64    # from E0 job 1484 sweep (peak 12.98 GB)
+    llama: 64   # from E0 job 1484 sweep (peak 10.31 GB)
+  architectures:
+    gemma: Gemma3ForConditionalGeneration
+    qwen: Qwen3ForCausalLM
+    llama: LlamaForCausalLM
+  module_paths:                     # decoder = object holding .layers, .norm, .embed_tokens
+    gemma: {decoder: model.language_model, lm_head: lm_head, attn_out: post_attention_layernorm, mlp_out: post_feedforward_layernorm}
+    qwen:  {decoder: model, lm_head: lm_head, attn_out: self_attn, mlp_out: mlp}
+    llama: {decoder: model, lm_head: lm_head, attn_out: self_attn, mlp_out: mlp}
+
+reference_facts:                 # AGENTS.md rule 33: assert and report; never edit to force a match
+  concepts_total: 1837
+  split_counts: {test: 1658, directions: 132, fewshot_reservoir: 47}
+  main_test: 1535
+  m1_extension: 123
+  strata_main: {sino: 481, nonsino: 706, ambiguous: 347, other_loan: 1}
+  m1_eligible: {gemma: 186, qwen: 166, llama: 162}
+  m1_eligible_na_rows: 179
+  single_token_vi_main: {gemma: 108, qwen: 96, llama: 96}
+  fewshot_selected: 30
+  collapsed_fewshot_demos:
+    - {set: 1, vi: "thứ tư"}
+    - {set: 3, vi: "nhóm"}
+    - {set: 4, vi: "khí đốt"}
+    - {set: 5, vi: "vàng"}
+    - {set: 6, vi: "sắt"}
+    - {set: 6, vi: "tiệc"}
+  ru_missing: {main_test: 11, fewshot_reservoir: 2}
+  concreteness_missing: 49
+  questionable_targets: ["151a3fe224ea", "17781bd98b3c", "922cd1167021", "c9584b841817", "c505c130104c", "f5411853b246"]
+  prompt_files: 27
+  prompt_records:
+    repetition_diac: {total: 1658, main: 1535, ext: 123}
+    translation_diac: {total: 1647, main: 1524, ext: 123}
+    repetition_nodiac: {total: 1236, main: 1231, ext: 5}
+    translation_nodiac: {total: 1226, main: 1221, ext: 5}
+    cloze_diac: {total: 41, main: 34, ext: 7}
+    cloze_nodiac: {total: 29, main: 29, ext: 0}
+    directions: {total: 1320, concepts: 132, fit_concepts: 106, validate_concepts: 26}
+  cloze_main_strata:
+    diac: {sino: 17, nonsino: 10, ambiguous: 7}
+    nodiac: {sino: 15, nonsino: 8, ambiguous: 6}
+  cloze_demo_concept_ids: ["1a9ec27bf14d", "8fa44725013f", "0a52c03dec8c"]
+  cognate_free_subset: 729           # checked in X0-c (needs tokenizers)
+  tokenizer_prefix_violations: 0     # checked in X0-c
+
+  x0c:                               # T03a tokenizer audit, both candidate sets (planner's scratch recount)
+    inputs_verified: 28              # concepts.jsonl + 27 prompt files
+    checkpoints: 6
+    tokenizer_x_colon_ids:           # tokenizer("x:").input_ids with default special tokens
+      gemma: [2, 236781, 236787]
+      qwen: [87, 25]
+      llama: [128000, 87, 25]
+    tokenizer_len: {gemma: 262145, qwen: 151669, llama: 128256}
+    model_dims:                      # text config [num_hidden_layers, hidden_size, vocab_size]
+      gemma: [34, 2560, 262208]
+      qwen: [36, 2560, 151936]
+      llama: [28, 3072, 128256]
+    joint_encodings: {released: 174680, zh_nospace: 34936, vi_nodiac_in_diac: 19871}
+    unique_prompts: 35704
+    prompt_duplicates:
+      translation_diac_per_set: {groups: 27, records: 55}
+      translation_nodiac_per_set: {groups: 18, records: 37}
+      repetition_and_cloze_per_file: {groups: 0, records: 0}
+      directions_within: {groups: 1, records: 2}
+      cross_file: {groups: 5, records: 10}
+    max_joint_len_bound: 128
+    m1_usable_first_token:           # plan §2.5; order en, fr, id, zh_released, zh_nospace
+      gemma: [161, 165, 181, 66, 186]
+      qwen: [141, 144, 160, 15, 166]
+      llama: [139, 141, 158, 61, 136]
+    first_content_equals_en:
+      fr: {gemma: 213, qwen: 259, llama: 259}
+      id: {gemma: 78, qwen: 109, llama: 109}
+    cognate_distance_ok: 741
+    cognate_distinct_first_tokens: {gemma: 732, qwen: 729, llama: 729}
+    cognate_free_sha256: f1e7a6b5a0c197b1769215224503ee33a8f2e216943ae0d8088d55219042a58f
+    cognate_free_coverage: {translation_diac_set1: 721, cloze_diac_set1: 14, cloze_nodiac_set1: 11, repetition_nodiac_set1: 549, translation_nodiac_set1: 541}
+    cognate_free_strata: {nonsino: 454, sino: 146, ambiguous: 129, other_loan: 0}
+    cognate_free_pos: {noun: 573, verb: 101, adj: 55}
+  x0d:                                # T03b derived manifests (planner's independent implementation)
+    target_form_concepts: 1790        # 1658 test (main + ext) + 132 directions
+    target_form_rows: 12530           # 1790 × 7 (lang, variant) rows
+    nodiac_rule_mismatch_vs_prompts: 0          # over all 14,801 nodiac-file records
+    nodiac_rule_differs_from_column: 2          # case-only: "gấu Bắc Cực", "đậu Lima"
+    zh_released_equals_space_plus_zh: 0         # mismatches over all rep/tr/cloze/directions zh targets
+    cognate_rows: 1535
+    cognate_free: 729
+    distractor_rows_per_family: 10745           # 1535 × 7
+    distractor_kinds:                            # [exact, count_fallback] per combo, order as manifests.distractor_combos
+      gemma: [[1531, 4], [1534, 1], [1534, 1], [1534, 1], [1535, 0], [1535, 0], [1528, 7]]
+      qwen:  [[1534, 1], [1535, 0], [1534, 1], [1533, 2], [1535, 0], [1534, 1], [1427, 108]]
+      llama: [[1534, 1], [1535, 0], [1534, 1], [1533, 2], [1534, 1], [1535, 0], [1416, 119]]
+    distractor_sha256:                           # sha256 of the sorted lines "family\ttarget_lang\ttarget_variant\tconcept_id\tdistractor_id\n"
+      gemma: e31fee0fd1193157a88915a3dd3180842ee8f9ae7e5b71cdb7a6431b4ba4921c
+      qwen:  849a44af7dbcdc12d589426b27d85d29370255f472899db33ab052b6ed222d4f
+      llama: 78066fdfcd8da169800606caa77870304d58b143e7181f8dc4e40fd27f6d28d8
+    e8_rows_per_family: 1524
+    e8_order_sha256:                             # sha256 of lines "family\tstratum\trank\tconcept_id\n", strata in sorted order, ranks 0..n-1
+      gemma: 74ff7f3f97ffcc4c6db5a9293a151b8857892c22ddeaa1c803291536d535eb0b
+      qwen:  520f0819c5ec08d7de3012a6a76b142cdef0bd2b6603ba1d34bc29ad042f7691
+      llama: 0bcf6326b01997530d8b31edc58037a57075ebdb44d4345bb9124cc0f95d1e4d
+    e0_sample_sha256: 6890af5750912f6fed12706fc49cb8bfd976bcb63444a7a3a5abd419c6a97d43   # lines "rank\tconcept_id\n", ranks 0..49
+    e0_distractor_rows_per_family: 250          # 50 × 5

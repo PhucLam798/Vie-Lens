@@ -1,0 +1,21 @@
+# Vie-Lens dependencies. Exact pins equal the versions installed in /datastore/luannt/.cache/sb (OPS-2).
+# Shared venv: changing torch/transformers/tokenizers/numpy needs explicit approval (AGENTS.md rule 9).
+accelerate==1.15.0
+datasets==5.0.1
+hf-xet==1.6.0
+huggingface-hub==0.36.2
+matplotlib==3.11.2
+numpy==1.26.4
+pandas==3.0.6
+protobuf==7.36.2
+pyarrow==25.0.1
+pytest==9.1.1
+pyyaml==6.0.3
+safetensors==0.8.0
+scipy==1.17.1
+sentencepiece==0.2.2
+statsmodels==0.15.0
+tokenizers==0.22.2
+torch==2.8.0
+tqdm==4.70.1
+transformers==4.57.6

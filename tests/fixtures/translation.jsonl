@@ -1,0 +1,2 @@
+{"concept_id": "000000000001", "condition": "diac", "fewshot_set": 1, "format": "translation", "m1_extension": false, "prompt": "Translate:", "split": "test", "target_en": " coffee", "target_fr": " café", "target_id": " kopi", "target_vi": " cà phê", "target_zh": " 咖啡"}
+{"concept_id": "000000000002", "condition": "diac", "fewshot_set": 2, "format": "translation", "m1_extension": false, "prompt": "Translate:", "split": "test", "target_en": " coffee", "target_fr": " café", "target_id": " kopi", "target_vi": " cà phê", "target_zh": " 咖啡"}

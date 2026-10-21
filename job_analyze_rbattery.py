@@ -1,0 +1,67 @@
+#!/datastore/luannt/.cache/sb/bin/python
+"""Root CPU job wrapper for OPS-44 R-battery E4 sensitivities."""
+
+from __future__ import annotations
+
+import argparse
+import os
+from pathlib import Path
+import sys
+from typing import Sequence
+
+REPO = Path(__file__).resolve().parent
+os.chdir(REPO)
+sys.path.insert(0, str(REPO / "src"))
+
+from vilens import env_guard
+
+THREAD_CAPS = {
+    "OMP_NUM_THREADS": "2",
+    "MKL_NUM_THREADS": "2",
+    "OPENBLAS_NUM_THREADS": "2",
+    "NUMEXPR_NUM_THREADS": "2",
+    "RAYON_NUM_THREADS": "2",
+    "ARROW_NUM_THREADS": "2",
+    "TOKENIZERS_PARALLELISM": "false",
+}
+
+
+def resolve_repo_path(path: str | Path, *, repo_root: Path | None = None) -> Path:
+    """Resolve a user path from the repo root, independent of caller cwd."""
+    root = (repo_root or REPO).resolve()
+    candidate = Path(path)
+    return (candidate if candidate.is_absolute() else root / candidate).resolve()
+
+
+def main(argv: Sequence[str] | None = None) -> int:
+    """Run the R-battery metadata preflight or E4 sensitivity analysis."""
+    env_guard.guard(offline=True)
+    os.environ.update(THREAD_CAPS)
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--config", default="configs/experiments.yaml")
+    parser.add_argument("--preflight-only", action="store_true")
+    args = parser.parse_args(argv)
+
+    from vilens.config import load_config
+    from vilens.locks import ensure_adjudication_committed
+    from vilens.provenance import git_state
+    from scripts import analyze_rbattery
+
+    cfg = load_config(resolve_repo_path(args.config))
+    ensure_adjudication_committed(REPO)
+    commit, dirty = git_state(REPO)
+    if dirty:
+        raise RuntimeError(f"R-battery analysis code tree is dirty at {commit}")
+    table, okay = analyze_rbattery.preflight(cfg, repo=REPO)
+    print(table)
+    if args.preflight_only:
+        return 0 if okay else 2
+    if not okay:
+        raise SystemExit("R-battery E4 preflight failed; refusing analysis")
+    analyze_rbattery.analyze(cfg, repo=REPO)
+    return 0
+
+
+if __name__ == "__main__":
+    env_guard.guard(offline=True)
+    raise SystemExit(main())
